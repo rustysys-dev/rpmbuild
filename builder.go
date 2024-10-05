@@ -1,11 +1,15 @@
 package rpmbuild
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 
 	"github.com/google/rpmpack"
+	"github.com/jesseduffield/go-git/v5"
 )
 
 type Builder struct {
@@ -15,15 +19,51 @@ type Builder struct {
 	Files   []PackageFile
 }
 
-func (b Builder) genBinName() string {
+func (b *Builder) genBinName() string {
 	return b.BinDir + "/" + b.Name
 }
 
-func (b Builder) genRPMName() string {
-	return b.DistDir + "/" + b.Name + ".rpm"
+func (b *Builder) genRPMName() (string, error) {
+	if b.DistDir == "" {
+		b.DistDir = "dist"
+	}
+
+	if b.Name == "" {
+		b.SetNameFromRepo()
+		if b.Name == "" {
+			return "", errors.New("unable to find a suitable name, please add to config")
+		}
+	}
+
+	if b.Version == "" {
+		b.Version = "0.0.1"
+	}
+
+	if b.Release == "" {
+		b.Release = "1"
+	}
+
+	if b.Arch == "" {
+		b.Arch = "noarch"
+	}
+
+	return strings.Join([]string{b.DistDir, "/", b.Name, "-", b.Version, "-", b.Release, ".", b.Arch, ".rpm"}, ""), nil
 }
 
-func (b Builder) Build() error {
+func (b *Builder) SetNameFromRepo() error {
+	repo, err := git.PlainOpen(".")
+	if err != nil {
+		return err
+	}
+	worktree, err := repo.Worktree()
+	if err != nil {
+		return err
+	}
+	b.Name = filepath.Base(worktree.Filesystem.Root())
+	return nil
+}
+
+func (b *Builder) Build() error {
 	if err := os.RemoveAll("build"); err != nil {
 		return err
 	}
@@ -42,7 +82,7 @@ func (b Builder) Build() error {
 	return nil
 }
 
-func (b Builder) Package() error {
+func (b *Builder) Package() error {
 	if err := os.RemoveAll(b.DistDir); err != nil {
 		return err
 	}
@@ -51,7 +91,12 @@ func (b Builder) Package() error {
 		return err
 	}
 
-	out, err := os.Create(b.genRPMName())
+	rpmName, err := b.genRPMName()
+	if err != nil {
+		return err
+	}
+
+	out, err := os.Create(rpmName)
 	if err != nil {
 		return err
 	}
