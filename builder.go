@@ -10,17 +10,17 @@ import (
 
 type Builder struct {
 	rpmpack.RPMMetaData
-	binDir  string
-	distDir string
-	files   []PackageFile
+	BinDir  string
+	DistDir string
+	Files   []PackageFile
 }
 
 func (b Builder) genBinName() string {
-	return b.binDir + "/" + b.Name
+	return b.BinDir + "/" + b.Name
 }
 
 func (b Builder) genRPMName() string {
-	return b.distDir + "/" + b.Name + ".rpm"
+	return b.DistDir + "/" + b.Name + ".rpm"
 }
 
 func (b Builder) Build() error {
@@ -43,11 +43,11 @@ func (b Builder) Build() error {
 }
 
 func (b Builder) Package() error {
-	if err := os.RemoveAll(b.distDir); err != nil {
+	if err := os.RemoveAll(b.DistDir); err != nil {
 		return err
 	}
 
-	if err := os.MkdirAll(b.distDir, os.ModePerm); err != nil {
+	if err := os.MkdirAll(b.DistDir, os.ModePerm); err != nil {
 		return err
 	}
 
@@ -62,7 +62,7 @@ func (b Builder) Package() error {
 		return err
 	}
 
-	for _, file := range b.files {
+	for _, file := range b.Files {
 		f, err := file.ToRPMFile()
 		if err != nil {
 			return err
