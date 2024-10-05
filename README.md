@@ -59,18 +59,17 @@ var app = rpmbuild.Builder{
 
 	Files: []rpmbuild.PackageFile{
 		{
-			Source:      "bin/sabita_yusha",
-			Destination: "/usr/bin/sabita_yusha",
+			Source:      "bin/your_package",
+			Destination: "/usr/bin/your_package",
 		},
 		{
-			Source:      "scripts/systemd/sabita_yusha.service",
-			Destination: "/usr/lib/systemd/user/sabita_yusha.service",
+			Source:      "scripts/systemd/your_package.service",
+			Destination: "/usr/lib/systemd/user/your_package.service",
 		},
 	},
 }
 
 func main() {
-	fmt.Println(strings.Join(os.Environ(), "\n"))
 	if err := app.Build(); err != nil {
 		fmt.Println(err)
 		panic(err)
