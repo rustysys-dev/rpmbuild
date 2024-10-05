@@ -29,10 +29,6 @@ and a very little bit of code.
 package main
 
 import (
-	"fmt"
-	"os"
-	"strings"
-
 	"github.com/google/rpmpack"
 	"github.com/rustysys-dev/rpmbuild"
 )
@@ -71,7 +67,6 @@ var app = rpmbuild.Builder{
 
 func main() {
 	if err := app.Build(); err != nil {
-		fmt.Println(err)
 		panic(err)
 	}
 
