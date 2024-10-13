@@ -78,7 +78,9 @@ func (b *Builder) Build() error {
 		return err
 	}
 
-	fmt.Println(stdout)
+	if len(stdout) > 0 {
+		fmt.Println(string(stdout))
+	}
 
 	return nil
 }
