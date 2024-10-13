@@ -2,10 +2,11 @@
 
 Simple RPM Build library on top of rpmpack to make CI/CD processing easy
 
-:> [!WARNING]
-
-> I will be continuing to work on this so long as I need it. It will likely be at least
-> a short while until its API is fully stable.
+> [  WARNING  ]
+> 
+> Until a versioned release (not currently planned) the API could change, please understand 🙇‍♂️
+>
+> If you would like to see a stable release, or if you would like me to update something please let me know and I will try to accomadate you.
 
 ## Example
 
