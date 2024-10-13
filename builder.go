@@ -13,9 +13,10 @@ import (
 )
 
 type Builder struct {
-	rpmpack.RPMMetaData
 	BinDir  string
 	DistDir string
+	rpmpack.RPMMetaData
+	Scripts Scripts
 	Files   []PackageFile
 }
 
@@ -117,6 +118,13 @@ func (b *Builder) Package() error {
 			r.AddFile(*f)
 		}
 	}
+
+	r.AddPretrans(b.Scripts.PreTransact)
+	r.AddPosttrans(b.Scripts.PostTransact)
+	r.AddPrein(b.Scripts.PreInstall)
+	r.AddPostin(b.Scripts.PostInstall)
+	r.AddPreun(b.Scripts.PreUninstall)
+	r.AddPostun(b.Scripts.PostUninstall)
 
 	// TODO: need to verify before write?
 	if err := r.Write(out); err != nil {
