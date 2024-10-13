@@ -53,6 +53,16 @@ var app = rpmbuild.Builder{
 		}},
 	},
 
+	// Scripts should be `/bin/sh` executable contents and not a filename
+	Scripts: rpmbuild.Scripts{
+		PreTransact:   "",
+		PostTransact:  "",
+		PreInstall:    "",
+		PostInstall:   "",
+		PreUninstall:  "",
+		PostUninstall: "",
+	},
+
 	Files: []rpmbuild.PackageFile{
 		{
 			Source:      "bin/your_package",
